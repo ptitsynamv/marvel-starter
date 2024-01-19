@@ -1,7 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app/App';
+import MarvelService from './services/MarvelService';
 import './style/style.scss';
+
+// const marvelService = new MarvelService();
+// marvelService.getAllCharacters().then((d) => {
+//   console.log(d);
+// });
 
 ReactDOM.render(
   <React.StrictMode>
@@ -9,4 +15,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
