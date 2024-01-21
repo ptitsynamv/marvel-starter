@@ -1,17 +1,10 @@
 {
-    "eslint.options": {
-        "extensions": [
-            ".ts",
-            ".html"
-        ]
-    },
-    "eslint.validate": [
-        "javascript",
-        "typescript",
-        "html"
-    ],
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-           // "source.removeUnusedImports": true,
-    }
+  "eslint.options": {
+    "extensions": [".ts", ".html"]
+  },
+  "eslint.validate": ["javascript", "typescript", "html"],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    // "source.removeUnusedImports": true,
+  }
 }
