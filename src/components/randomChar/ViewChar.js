@@ -2,7 +2,10 @@ const ViewChar = ({ char }) => {
   const emptyInfo = 'This is empty';
 
   const { name, description, thumbnail, homepage, wiki } = char;
-  const imageoOjectFitStyle = thumbnail.indexOf('image_not_available') !== -1 ? 'contain' : 'cover';
+  const imageoOjectFitStyle =
+    thumbnail && thumbnail.indexOf('image_not_available') !== -1
+      ? 'contain'
+      : 'cover';
 
   return (
     <div className="randomchar__block">

@@ -1,80 +1,62 @@
-import { Component } from 'react';
+import { Component, useState, useEffect } from 'react';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/spinner';
 import ViewChar from './ViewChar';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
-class RandomChar extends Component {
-  marvelService = new MarvelService();
+const RandomChar = (props) => {
+  const [char, setChar] = useState({});
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      char: {},
-      loading: true,
-      error: false,
-    };
-  }
+  const { loading, error, getCharacter, clearError } = useMarvelService();
 
-  componentDidMount() {
-    this.updateChar();
-  }
+  useEffect(() => {
+    updateChar();
+  }, []);
 
-  onCharLoaded = (char) => {
-    this.setState({ char, loading: false });
+  const onCharLoaded = (char) => {
+    setChar(char);
   };
 
-  onError = () => {
-    this.setState({ error: true, loading: false });
-  };
-
-  updateChar = () => {
+  const updateChar = () => {
+    clearError();
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
 
-    this.marvelService
-      .getCharacter(id)
-      .then(this.onCharLoaded)
-      .catch(this.onError);
+    getCharacter(id).then(onCharLoaded);
   };
 
-  onRandomCharClick = () => {
-    this.setState({ loading: true });
-    this.updateChar();
+  const onRandomCharClick = () => {
+    updateChar();
   };
 
-  render() {
-    const { char, loading, error } = this.state;
+  const errorMessage = error ? <ErrorMessage /> : null;
+  const spinner = loading ? <Spinner /> : null;
+  const content = !(loading || error) ? <ViewChar char={char} /> : null;
 
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error) ? <ViewChar char={char} /> : null;
-
-    return (
-      <div className="randomchar">
-        {errorMessage}
-        {spinner}
-        {content}
-        <div className="randomchar__static">
-          <p className="randomchar__title">
-            Random character for today!
-            <br />
-            Do you want to get to know him better?
-          </p>
-          <p className="randomchar__title">Or choose another one</p>
-          <button
-            className="button button__main"
-            type="button"
-            onClick={this.onRandomCharClick}
-          >
-            <div className="inner">try it</div>
-          </button>
-          <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
-        </div>
+  return (
+    <div className="randomchar">
+      {errorMessage}
+      {spinner}
+      {content}
+      <div className="randomchar__static">
+        <p className="randomchar__title">
+          Random character for today!
+          <br />
+          Do you want to get to know him better?
+        </p>
+        <p className="randomchar__title">Or choose another one</p>
+        <button
+          className="button button__main"
+          type="button"
+          onClick={onRandomCharClick}
+        >
+          <div className="inner">try it</div>
+        </button>
+        <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default RandomChar;
