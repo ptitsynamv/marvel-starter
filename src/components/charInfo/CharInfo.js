@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import Spinner from '../spinner/spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
@@ -73,7 +74,8 @@ class CharInfo extends Component {
 
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki, comics } = char;
-  const ojectFitStyle = thumbnail.indexOf('image_not_available') !== -1 ? 'contain' : 'cover';
+  const ojectFitStyle =
+    thumbnail.indexOf('image_not_available') !== -1 ? 'contain' : 'cover';
 
   return (
     <>
@@ -113,6 +115,10 @@ const View = ({ char }) => {
       )}
     </>
   );
+};
+
+CharInfo.propTypes = {
+  charId: PropTypes.number,
 };
 
 export default CharInfo;

@@ -3,6 +3,8 @@ class MarvelService {
 
   _apiKey = `apikey=${process.env.REACT_APP_MARVEL_API_KEY}`;
 
+  _baseOffset = 210;
+
   getResource = async (url) => {
     const res = await fetch(url);
 
@@ -13,9 +15,9 @@ class MarvelService {
     return await res.json();
   };
 
-  getAllCharacters = async () => {
+  getAllCharacters = async (offset = this._baseOffset) => {
     const res = await this.getResource(
-      `${this._apiBase}characters?limit=9&offset=210&${this._apiKey}`
+      `${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`
     );
     return res.data.results.map(this._transformCharacter);
   };
@@ -34,7 +36,7 @@ class MarvelService {
     thumbnail: `${character.thumbnail.path}.${character.thumbnail.extension}`,
     homepage: character.urls[0].url,
     wiki: character.urls[1].url,
-    comics: character.comics.items
+    comics: character.comics.items,
   });
 }
 

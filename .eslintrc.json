@@ -19,6 +19,12 @@
     "comma-dangle": "off",
     "no-return-await": "off",
     "react/function-component-definition": "off",
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "operator-linebreak": "off",
+    "no-unused-vars": "warn",
+    "react/no-unused-state": "off",
+    "import/no-extraneous-dependencies": "off",
+    "react/require-default-props": "off",
+    "max-classes-per-file": "off"
   }
 }
