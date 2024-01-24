@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import './charList.scss';
 import useMarvelService from '../../services/MarvelService';
@@ -23,11 +23,14 @@ const CharList = (props) => {
     getAllCharacters(offset).then(onCharListLoaded);
   };
 
-  const onCharListLoaded = (newCharList) => {
+  const onCharListLoaded = async (newCharList) => {
     setCharList((charList) => [...charList, ...newCharList]);
     setNewItemLoading(false);
     setOffset((offset) => offset + 9);
     setCharEnded(newCharList.length < 9);
+
+    const { logger, secondLogger } = await import('./someFunc');
+    secondLogger();
   };
 
   const itemRefs = useRef([]);
@@ -79,6 +82,11 @@ const CharList = (props) => {
 
   const errorMessage = error ? <ErrorMessage /> : null;
   const spinner = loading && !newItemLoading ? <Spinner /> : null;
+  if (loading) {
+    import('./someFunc')
+      .then((obj) => obj.logger())
+      .catch();
+  }
 
   return (
     <div className="char__list">
