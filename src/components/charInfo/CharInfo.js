@@ -77,7 +77,6 @@ const View = ({ char }) => {
       {comics.length ? (
         <ul className="char__comics-list">
           {comics.slice(0, 10).map((item, index) => (
-            // eslint-disable-next-line react/no-array-index-key
             <li className="char__comics-item" key={index}>
               {item.name}
             </li>
