@@ -2,8 +2,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import './charList.scss';
 import useMarvelService from '../../services/MarvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/spinner';
+import { ErrorMessage } from 'formik';
+
+const setContent = (stateProcess, Component, newItemLoading) => {
+  switch (stateProcess) {
+    case 'waiting':
+      return <Spinner />;
+    case 'loading':
+      return newItemLoading ? <Component /> : <Spinner />;
+    case 'confirmed':
+      return <Component />;
+    case 'error':
+      return <ErrorMessage />;
+    default:
+      throw new Error('Unexpected stateProcess state');
+  }
+};
 
 const CharList = (props) => {
   const [charList, setCharList] = useState([]);
@@ -11,7 +26,8 @@ const CharList = (props) => {
   const [offset, setOffset] = useState(210);
   const [charEnded, setCharEnded] = useState(false);
 
-  const { loading, error, getAllCharacters } = useMarvelService();
+  const { getAllCharacters, stateProcess, setStateProcess } =
+    useMarvelService();
 
   useEffect(() => {
     onRequest(offset, true);
@@ -20,7 +36,9 @@ const CharList = (props) => {
   const onRequest = (offset, initial) => {
     setNewItemLoading(!initial);
 
-    getAllCharacters(offset).then(onCharListLoaded);
+    getAllCharacters(offset)
+      .then(onCharListLoaded)
+      .then(() => setStateProcess('confirmed'));
   };
 
   const onCharListLoaded = async (newCharList) => {
@@ -28,9 +46,6 @@ const CharList = (props) => {
     setNewItemLoading(false);
     setOffset((offset) => offset + 9);
     setCharEnded(newCharList.length < 9);
-
-    const { logger, secondLogger } = await import('./someFunc');
-    secondLogger();
   };
 
   const itemRefs = useRef([]);
@@ -80,19 +95,9 @@ const CharList = (props) => {
     return <ul className="char__grid">{items}</ul>;
   }
 
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading && !newItemLoading ? <Spinner /> : null;
-  if (loading) {
-    import('./someFunc')
-      .then((obj) => obj.logger())
-      .catch();
-  }
-
   return (
     <div className="char__list">
-      {errorMessage}
-      {spinner}
-      {renderItems(charList)}
+      {setContent(stateProcess, () => renderItems(charList), newItemLoading)}
       <button
         className="button button__main button__long"
         type="button"

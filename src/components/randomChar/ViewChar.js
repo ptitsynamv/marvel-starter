@@ -1,7 +1,7 @@
-const ViewChar = ({ char }) => {
+const ViewChar = ({ data }) => {
   const emptyInfo = 'This is empty';
 
-  const { name, description, thumbnail, homepage, wiki } = char;
+  const { name, description, thumbnail, homepage, wiki } = data;
   const imageoOjectFitStyle =
     thumbnail && thumbnail.indexOf('image_not_available') !== -1
       ? 'contain'

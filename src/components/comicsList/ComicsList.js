@@ -5,29 +5,46 @@ import { Link } from 'react-router-dom';
 import Spinner from '../spinner/spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
+const setContent = (stateProcess, Component, newItemLoading) => {
+  switch (stateProcess) {
+    case 'waiting':
+      return <Spinner />;
+    case 'loading':
+      return newItemLoading ? <Component /> : <Spinner />;
+    case 'confirmed':
+      return <Component />;
+    case 'error':
+      return <ErrorMessage />;
+    default:
+      throw new Error('Unexpected stateProcess state');
+  }
+};
+
 const ComicsList = () => {
   const [comics, setComics] = useState([]);
   const [offset, setOffset] = useState(0);
   const [newComicsLoading, setNewComicsLoading] = useState(false);
-  const { error, loading, getComics } = useMarvelService();
+  const [comicEnded, setComicEnded] = useState(false);
+
+  const { getComics, stateProcess, setStateProcess } = useMarvelService();
 
   useEffect(() => {
-    loadComics();
+    onRequest(offset, true);
   }, []);
 
-  const loadComics = (initial) => {
+  const onRequest = (offset, initial) => {
     setNewComicsLoading(!initial);
-    getComics(offset).then(onComicsLoaded);
+
+    getComics(offset)
+      .then(onComicsLoaded)
+      .then(() => setStateProcess('confirmed'));
   };
 
   const onComicsLoaded = (newComics) => {
-    setNewComicsLoading(false);
     setComics((comics) => [...comics, ...newComics]);
+    setNewComicsLoading(false);
     setOffset((offset) => offset + 8);
-  };
-
-  const onLoadMoreClick = () => {
-    loadComics(false);
+    setComicEnded(newComics.length < 9);
   };
 
   function renderItems(arr) {
@@ -56,19 +73,15 @@ const ComicsList = () => {
     return <ul className="comics__grid">{items}</ul>;
   }
 
-  const spinner = loading && !newComicsLoading ? <Spinner></Spinner> : null;
-  const errorMessage = error ? <ErrorMessage></ErrorMessage> : null;
-
   return (
     <div className="comics__list">
-      {errorMessage}
-      {spinner}
-      {renderItems(comics)}
+      {setContent(stateProcess, () => renderItems(comics), newComicsLoading)}
       <button
         className="button button__main button__long"
         type="button"
         disabled={newComicsLoading}
-        onClick={onLoadMoreClick}
+        style={{ display: comicEnded ? 'none' : 'block' }}
+        onClick={() => onRequest(offset, false)}
       >
         <div className="inner">load more</div>
       </button>

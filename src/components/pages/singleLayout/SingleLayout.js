@@ -4,10 +4,19 @@ import { ErrorMessage } from 'formik';
 import Spinner from '../../spinner/spinner';
 import { useParams } from 'react-router-dom';
 import AppBanner from '../../appBanner/AppBanner';
+import setContent from '../../../utils/setContent';
 
 const SingleLayout = ({ BaseComponent, dataType }) => {
   const [data, setData] = useState(null);
-  const { loading, error, getCharacter, getComic, clearError } = useMarvelService();
+  const {
+    loading,
+    error,
+    getCharacter,
+    getComic,
+    clearError,
+    stateProcess,
+    setStateProcess,
+  } = useMarvelService();
   const { id } = useParams();
 
   useEffect(() => {
@@ -18,10 +27,14 @@ const SingleLayout = ({ BaseComponent, dataType }) => {
     clearError();
     switch (dataType) {
       case 'char':
-        getCharacter(id).then(onDataLoaded);
+        getCharacter(id)
+          .then(onDataLoaded)
+          .then(() => setStateProcess('confirmed'));
         break;
       case 'comic':
-        getComic(id).then(onDataLoaded);
+        getComic(id)
+          .then(onDataLoaded)
+          .then(() => setStateProcess('confirmed'));
         break;
       default:
     }
@@ -31,18 +44,10 @@ const SingleLayout = ({ BaseComponent, dataType }) => {
     setData(data);
   };
 
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? <Spinner /> : null;
-  const content = !(loading || error || !data) ? (
-    <BaseComponent data={data} />
-  ) : null;
-
   return (
     <>
       <AppBanner />
-      {errorMessage}
-      {spinner}
-      {content}
+      {setContent(stateProcess, BaseComponent, data)}
     </>
   );
 };
